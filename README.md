@@ -12,6 +12,7 @@ NOTE! This project uses GLFW. You will need to do the following if you decide to
 - Compile it using CMake
 - Link GLFW to the source directory
 - Download and setup GLAD
+- Put Glad.c in the res folder
 
 Detailed instructions can be found [HERE!](https://learnopengl.com/Getting-started/Creating-a-window)
 

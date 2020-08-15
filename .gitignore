@@ -5,6 +5,7 @@
 
 bin/
 bin-int/
+glad.c
 
 # User-specific files
 *.rsuser
