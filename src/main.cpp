@@ -9,6 +9,25 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
 
+// these will be moved eventually!!!!!!!!!
+const char* vertexShaderSource = 
+	"#version 330 core\n"
+	"layout (location = 0) in vec3 aPos;\n"
+	"void main()\n"
+	"{\n"
+	"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+	"}\0";
+
+
+const char* fragmentShaderSource =
+	"#version 330 core\n"
+	"out vec4 FragColor;\n"
+	"void main()\n"
+	"{\n"
+	"FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+	"}\0";
+
+
 int main() 
 {
 	// create a GLFW window
@@ -38,6 +57,57 @@ int main()
 	glViewport(0, 0, 800, 600);
 	// tell GLFW to call the resize-callback when changing the window size so that OpenGL's viewport matches GLFW
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+	// ITS TRIANGLE TIME
+	float triangleVertices[] = {
+		-0.5f, -0.5f, 0.0f,
+		 0.5f, -0.5f, 0.0f,
+		 0.0f,  0.5f, 0.0f
+	};
+
+	// Create VERTEX BUFFER OBJECT
+	unsigned int VBO;
+	glGenBuffers(1, &VBO);
+	// bind our newly created buffer to the GL_ARRAY_BUFFER
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW);
+
+	// CREATING THE SHADERS! ///////////////////////////////////////////////////////////////////
+	// compiling our vertex shader
+	unsigned int vertexShader;
+	vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glCompileShader(vertexShader);
+
+	// compiling our fragment shader
+	unsigned int fragmentShader;
+	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glCompileShader(fragmentShader);
+
+	// make sure the vertex shader compiled
+	int success;
+	char infoLog[512];
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+
+	if (!success)
+	{
+		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+	}
+
+	// make sure the fragment shader compiled
+	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+
+	if (!success)
+	{
+		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+	}
+
+	// CREATING THE SHADER PROGRAM //////////////////////////////////////////////////////////////
+
+
 
 	//  THE RENDER LOOP
 	// |---------------|
