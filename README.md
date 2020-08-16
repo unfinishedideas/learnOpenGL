@@ -1,5 +1,5 @@
 # Learn OpenGL
-![logo](https://www.opengl.org/img/opengl_logo.jpg)  
+![logo](./glLogo.jpg)  
 
 This is where I am going to be putting my progress with learning the OpenGL graphics api.
 Mainly by following the tutorial series presented at [LearnOpenGL.com](https://learnopengl.com/)
