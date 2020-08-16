@@ -14,7 +14,7 @@ NOTE! This project uses GLFW and Glad. You will need to do the following if you 
 - [Download](https://glad.dav1d.de/) Glad and add the library and include folders to your project.
 - Put Glad.c in the res folder from root
 
-I recommend just following the instructions found [here!](https://learnopengl.com/Getting-started/Creating-a-window)
+I recommend just following the detailed instructions found [here!](https://learnopengl.com/Getting-started/Creating-a-window)
 
 ---
 Thanks for stopping by  

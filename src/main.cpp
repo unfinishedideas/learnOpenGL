@@ -38,8 +38,7 @@ int main()
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);  // <== this is for MAC OS. We are Windows only for now
 
 	GLFWwindow* window = glfwCreateWindow(800, 600, "Pete Learns OpenGL", NULL, NULL);
-	if (window == NULL) 
-	{
+	if (window == NULL) {
 		std::cout << "Failed to create GLFW window!" << std::endl;
 		glfwTerminate();
 		return -1;
@@ -47,8 +46,7 @@ int main()
 	glfwMakeContextCurrent(window);
 
 	// init GLAD (glad manages function pointers for OpenGL)
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) 
-	{
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;	
 	}
@@ -90,8 +88,7 @@ int main()
 	char infoLog[512];
 	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
 
-	if (!success)
-	{
+	if (!success) {
 		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
@@ -99,15 +96,56 @@ int main()
 	// make sure the fragment shader compiled
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
 
-	if (!success)
-	{
+	if (!success) {
 		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 
 	// CREATING THE SHADER PROGRAM //////////////////////////////////////////////////////////////
+	unsigned int shaderProgram;
+	shaderProgram = glCreateProgram();
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	glLinkProgram(shaderProgram);
 
+	// make sure the shaderProgram properly linked the shaders
+	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+	if (!success) {
+		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER_PROGRAM::FAILED_TO_LINK\n" << infoLog << std::endl;
+	}
 
+	glUseProgram(shaderProgram);
+
+	// clean up the now unused shader objects (as they are loaded into the program)
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+
+	// Linking vertex attributes... telling OpenGL what the data we gave it actually is
+	// 1st param from shader (location 0), 2nd: size of vertex attrib (vec3), 3rd: data type, 4th: do we want to normalize data?
+	// 5th: the stride. In this case we know that each vertex takes up 3 float values, 6th: uses a void* and specifies the offset of the first component of the first vertex
+	// attribute in the array.
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	// Setting up a VERTEX ARRAY OBJECT (VAO)
+	unsigned int VAO;
+	glGenVertexArrays(1, &VAO);
+
+	// I dont know anymore
+	// 1: bind VAO
+	glBindVertexArray(VAO);
+	// 2: copy our verticies array in a buffer for OpenGL to use
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW);
+	// 3: set our vertex attributes pointers
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	// From the tutorial: And that is it! Everything we did the last few million pages led up to this moment, 
+	// a VAO that stores our vertex attribute configuration and which VBO to use. Usually when you have multiple objects you want to draw, 
+	// you first generate/configure all the VAOs (and thus the required VBO and attribute pointers) and store those for later use. 
+	// The moment we want to draw one of our objects, we take the corresponding VAO, bind it, then draw the object and unbind the VAO again. 
 
 	//  THE RENDER LOOP
 	// |---------------|
@@ -119,6 +157,11 @@ int main()
 		// rendering commands here
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		// Render the triangle plz
+		glUseProgram(shaderProgram);
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		// check and call events and swap the buffers
 		glfwSwapBuffers(window);
