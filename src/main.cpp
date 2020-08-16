@@ -57,10 +57,23 @@ int main()
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 	// ITS TRIANGLE TIME
-	float triangleVertices[] = {
-		-0.5f, -0.5f, 0.0f,
-		 0.5f, -0.5f, 0.0f,
-		 0.0f,  0.5f, 0.0f
+		// float vertices[] = {
+		//	-0.5f, -0.5f, 0.0f,
+		//	 0.5f, -0.5f, 0.0f,
+		//	 0.0f,  0.5f, 0.0f
+		//};
+
+	// This is more like rectangle time!
+	float vertices[] = {
+	 0.5f,  0.5f, 0.0f,  // top right
+	 0.5f, -0.5f, 0.0f,  // bottom right
+	-0.5f, -0.5f, 0.0f,  // bottom left
+	-0.5f,  0.5f, 0.0f   // top left 
+	};
+	// we use indices to refer to the unique points to account for overlapping triangles
+	unsigned int indices[] = {  // note that we start from 0!
+		0, 1, 3,   // first triangle
+		1, 2, 3    // second triangle
 	};
 
 	// Create VERTEX BUFFER OBJECT
@@ -68,7 +81,7 @@ int main()
 	glGenBuffers(1, &VBO);
 	// bind our newly created buffer to the GL_ARRAY_BUFFER
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	// CREATING THE SHADERS! ///////////////////////////////////////////////////////////////////
 	// compiling our vertex shader
@@ -137,7 +150,7 @@ int main()
 	glBindVertexArray(VAO);
 	// 2: copy our verticies array in a buffer for OpenGL to use
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	// 3: set our vertex attributes pointers
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -146,6 +159,13 @@ int main()
 	// a VAO that stores our vertex attribute configuration and which VBO to use. Usually when you have multiple objects you want to draw, 
 	// you first generate/configure all the VAOs (and thus the required VBO and attribute pointers) and store those for later use. 
 	// The moment we want to draw one of our objects, we take the corresponding VAO, bind it, then draw the object and unbind the VAO again. 
+
+	// For the rectangle, generate the Element Buffer Object (EBO)
+	unsigned int EBO;
+	glGenBuffers(1, &EBO);
+	// bind the ebo to the buffer
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	//  THE RENDER LOOP
 	// |---------------|
@@ -161,7 +181,13 @@ int main()
 		// Render the triangle plz
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		// original call for just the Triangle
+		//glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		// new call for the rectangle
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
 
 		// check and call events and swap the buffers
 		glfwSwapBuffers(window);
