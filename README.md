@@ -6,15 +6,15 @@ Mainly by following the tutorial series presented at [LearnOpenGL.com](https://l
 
 ---
 
-NOTE! This project uses GLFW. You will need to do the following if you decide to clone this down:
+NOTE! This project uses GLFW and Glad. You will need to do the following if you decide to clone this down:
   
 - Download GLFW 64 bit
-- Compile it using CMake
+- Compile it using CMake and the IDE of your choice.
 - Link GLFW to the source directory
-- Download and setup GLAD
+- [Download](https://glad.dav1d.de/) Glad and add the library and include folders to your project.
 - Put Glad.c in the res folder from root
 
-Detailed instructions can be found [HERE!](https://learnopengl.com/Getting-started/Creating-a-window)
+I recommend just following the instructions found [here!](https://learnopengl.com/Getting-started/Creating-a-window)
 
 ---
 Thanks for stopping by  
